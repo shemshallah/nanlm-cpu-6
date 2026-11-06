@@ -23,4 +23,6 @@ Optional variables: `NANLM_MAIN` (default `OWNER/NaNLMind`),
 `NANLM_RAM` (default `OWNER/nanlm-ram`), `NANLM_VRAM`
 (default `OWNER/nanlm-vram`).
 
+Set repository Actions variable `BSR5_PORTAL_API` to the NANNET portal base URL (HTTPS origin, without an endpoint path). The workflow exposes it as both `BSR5_PORTAL_API` and `NANNET_PORTAL_API`, with `NANNET_BOOTSTRAP_SLOT=5`. This is endpoint configuration, not an admin credential; runner authorization must use a separate per-runner credential issued by the portal.
+
 The Qwen demo stays on `deeprepo-cpu-1..5`; this ring is separate.
