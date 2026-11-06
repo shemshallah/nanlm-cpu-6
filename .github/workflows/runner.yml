@@ -80,10 +80,13 @@ jobs:
         env:
           PORTAL: ${{ env.NANNET_PORTAL_API }}
           SLOT: ${{ env.NANNET_BOOTSTRAP_SLOT }}
+          RUN_SLOT: ${{ inputs.slot }}
         run: |
           set -euo pipefail
           python3 - <<'PY'
           import json, os, urllib.parse, urllib.request
+          if int(os.environ["RUN_SLOT"]) != int(os.environ["SLOT"]) + 1:
+              raise SystemExit("workflow input slot does not match this BSR repository")
           url = os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"]
           separator = "&" if "?" in url else "?"
           request = urllib.request.Request(url + separator + urllib.parse.urlencode({"audience":"nannet-portal"}), headers={"Authorization":"Bearer " + os.environ["ACTIONS_ID_TOKEN_REQUEST_TOKEN"]})
