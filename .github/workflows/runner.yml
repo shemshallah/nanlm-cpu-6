@@ -11,7 +11,7 @@ on:
       slot:
         description: runner slot 1..6
         type: string
-        default: "1"
+        default: "6"
       epoch:
         description: logical epoch
         type: string
