@@ -38,6 +38,9 @@ env:
   DEEPREPO_MAIN: ${{ vars.NANLM_MAIN || format('{0}/NaNLMind', github.repository_owner) }}
   DEEPREPO_RAM: ${{ vars.NANLM_RAM || format('{0}/nanlm-ram', github.repository_owner) }}
   DEEPREPO_VRAM: ${{ vars.NANLM_VRAM || format('{0}/nanlm-vram', github.repository_owner) }}
+  BSR5_PORTAL_API: ${{ vars.BSR5_PORTAL_API }}
+  NANNET_PORTAL_API: ${{ vars.BSR5_PORTAL_API }}
+  NANNET_BOOTSTRAP_SLOT: "5"
   DEEPREPO_RAM_BACKEND: github
   DEEPREPO_VRAM_BACKEND: github
   NANLM_CORE: core
