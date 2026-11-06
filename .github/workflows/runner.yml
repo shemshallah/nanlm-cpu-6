@@ -27,6 +27,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 concurrency:
   group: nanlm-head-${{ inputs.slot }}
@@ -74,6 +75,30 @@ jobs:
 
       - name: Install engine Python deps
         run: pip install -r engine/requirements-core.txt
+
+      - name: Authenticate BSR identity with NANNET
+        env:
+          PORTAL: ${{ env.NANNET_PORTAL_API }}
+          SLOT: ${{ env.NANNET_BOOTSTRAP_SLOT }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.parse, urllib.request
+          url = os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"]
+          separator = "&" if "?" in url else "?"
+          request = urllib.request.Request(url + separator + urllib.parse.urlencode({"audience":"nannet-portal"}), headers={"Authorization":"Bearer " + os.environ["ACTIONS_ID_TOKEN_REQUEST_TOKEN"]})
+          with urllib.request.urlopen(request, timeout=15) as response:
+              oidc = json.load(response)["value"]
+          body = json.dumps({"id_token": oidc, "slot": int(os.environ["SLOT"])}).encode()
+          req = urllib.request.Request(os.environ["PORTAL"].rstrip("/") + "/v1/bootstrap/oidc", data=body, headers={"Content-Type":"application/json"}, method="POST")
+          with urllib.request.urlopen(req, timeout=20) as response:
+              result = json.load(response)
+          if result.get("role") != "admin" or "training:execute" not in result.get("scopes", []):
+              raise SystemExit("NANNET returned an invalid BSR role")
+          with open(os.environ["GITHUB_ENV"], "a") as env:
+              env.write("NANNET_BSR_TOKEN=" + result["token"] + "\n")
+          print("NANNET BSR authentication succeeded; token withheld")
+          PY
 
       - name: Build NaNLMind core
         if: ${{ inputs.op == 'selftest' || inputs.op == 'prewarm' || inputs.op == 'headshift' }}
