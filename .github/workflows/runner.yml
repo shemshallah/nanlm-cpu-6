@@ -106,7 +106,7 @@ jobs:
           PY
 
       - name: Build NaNLMind core
-        if: ${{ inputs.op == 'selftest' || inputs.op == 'prewarm' || inputs.op == 'headshift' }}
+        if: ${{ inputs.op == 'selftest' || inputs.op == 'prewarm' || inputs.op == 'headshift' || inputs.op == 'loop' }}
         run: make -C core -j2
 
       - name: Execute head shift
